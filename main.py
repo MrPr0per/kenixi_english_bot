@@ -50,7 +50,7 @@ class TgBot:
         if images:
             collage = self.formatter.make_collage(images)
         else:
-            collage = Image.open('images_not_found.png')
+            collage = Image.open('static/images_not_found.png')
 
         bio = BytesIO()
         collage.save(bio, format='JPEG', quality=90)
