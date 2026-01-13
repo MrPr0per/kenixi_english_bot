@@ -1,0 +1,12 @@
+[project]
+name = "kenixi-english-bot"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "aiohttp>=3.13.3",
+    "asyncio>=4.0.0",
+    "pillow>=12.1.0",
+    "python-telegram-bot>=22.5",
+]

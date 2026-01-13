@@ -11,7 +11,7 @@ from secrets import PIXABAY_API_KEY
 
 
 class ImagesDownloader:
-    BASE_URL = 'https://pixabay.com/api/'
+    BASE_URL = "https://pixabay.com/api/"
 
     def __init__(self, api_key: str = PIXABAY_API_KEY):
         self.api_key = api_key
@@ -20,17 +20,21 @@ class ImagesDownloader:
     async def fetch_image_urls(self, query: str, n: int = 16) -> list[str]:
         """Получаем URLs n картинок в минимальном качестве"""
         encoded_query = urllib.parse.quote(query)
-        if n > 200: raise Exception(f'Запросить можно только 200 картинок за раз (было запрошено: {n})')
-        url = f'{self.BASE_URL}?key={self.api_key}&q={encoded_query}&per_page={n}'
+        if n > 200:
+            raise Exception(
+                f"Запросить можно только 200 картинок за раз (было запрошено: {n})"
+            )
+        url = f"{self.BASE_URL}?key={self.api_key}&q={encoded_query}&per_page={n}"
 
         async with self.session.get(url) as resp:
             data = await resp.json()
-            return [hit['previewURL'] for hit in data['hits']]
+            return [hit["previewURL"] for hit in data["hits"]]
 
     async def download_image(self, url: str) -> BytesIO | None:
         """Скачиваем картинку и возвращаем как BytesIO."""
         async with self.session.get(url) as resp:
-            if resp.status != 200: return None
+            if resp.status != 200:
+                return None
             img_bytes = await resp.read()
             bio = BytesIO(img_bytes)
             bio.seek(0)
@@ -55,11 +59,11 @@ class ImagesDownloader:
 
 class ImagesFormatter:
     def __init__(
-            self,
-            columns_count=4,
-            column_width=300,
-            gap=10,
-            background_color=(255, 255, 255),
+        self,
+        columns_count=4,
+        column_width=300,
+        gap=10,
+        background_color=(255, 255, 255),
     ):
         self.columns_count = columns_count
         self.column_width = column_width
@@ -69,11 +73,13 @@ class ImagesFormatter:
     def make_collage(self, images: List[BytesIO]) -> Image.Image:
         """Формирует коллаж с минимальной разницей высот столбцов"""
         prepared = [
-            self._resize_to_column_width(Image.open(img).convert('RGB'))
+            self._resize_to_column_width(Image.open(img).convert("RGB"))
             for img in images
         ]
 
-        min_columns_heap = [(0, i) for i in range(self.columns_count)]  # хранит пары (current_height, column_index) 
+        min_columns_heap = [
+            (0, i) for i in range(self.columns_count)
+        ]  # хранит пары (current_height, column_index)
         heapq.heapify(min_columns_heap)
 
         column_images = [[] for _ in range(self.columns_count)]
@@ -90,13 +96,12 @@ class ImagesFormatter:
         ]
         total_height = max(column_heights)
 
-        total_width = (
-                self.columns_count * self.column_width
-                + self.gap * (self.columns_count + 1)
+        total_width = self.columns_count * self.column_width + self.gap * (
+            self.columns_count + 1
         )
 
         canvas = Image.new(
-            'RGB',
+            "RGB",
             (total_width, total_height),
             self.background_color,
         )
@@ -120,8 +125,8 @@ class ImagesFormatter:
 
 async def example():
     async with ImagesDownloader() as downloader:
-        images = await downloader.download_images('cats', 20)
-        print(f'Скачано {len(images)} картинок в память')
+        images = await downloader.download_images("cats", 20)
+        print(f"Скачано {len(images)} картинок в память")
 
     formatter = ImagesFormatter(
         columns_count=4,
@@ -134,5 +139,5 @@ async def example():
 
 
 # Запуск
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(example())
