@@ -1,4 +1,5 @@
 .idea
 .venv
+.env
 secrets.py
 __pycache__

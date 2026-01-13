@@ -7,14 +7,11 @@ from typing import List, Union
 import aiohttp
 from PIL import Image
 
-from secrets import PIXABAY_API_KEY
+from config import config
 
 
 class ImagesDownloader:
-    BASE_URL = "https://pixabay.com/api/"
-
-    def __init__(self, api_key: str = PIXABAY_API_KEY):
-        self.api_key = api_key
+    def __init__(self):
         self.session: aiohttp.ClientSession | None = None
 
     async def fetch_image_urls(self, query: str, n: int = 16) -> list[str]:
@@ -24,7 +21,7 @@ class ImagesDownloader:
             raise Exception(
                 f"Запросить можно только 200 картинок за раз (было запрошено: {n})"
             )
-        url = f"{self.BASE_URL}?key={self.api_key}&q={encoded_query}&per_page={n}"
+        url = f"{config.PIXABAY_BASE_URL}?key={config.PIXABAY_API_KEY}&q={encoded_query}&per_page={n}"
 
         async with self.session.get(url) as resp:
             data = await resp.json()

@@ -11,7 +11,7 @@ from telegram.ext import (
 )
 
 from images_processing import ImagesDownloader, ImagesFormatter
-from secrets import TG_BOT_API_KEY
+from config import config
 
 
 class TgBot:
@@ -39,7 +39,7 @@ class TgBot:
 
         self.app = (
             ApplicationBuilder()
-            .token(TG_BOT_API_KEY)
+            .token(config.TG_BOT_API_KEY)
             .post_init(post_init)
             .post_shutdown(post_shutdown)
             .build()

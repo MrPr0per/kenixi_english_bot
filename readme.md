@@ -1,5 +1,5 @@
 порядок запуска:
-заполнить ключи в secrets.py(пример в secrets.example.py)
+заполнить ключи в .env(пример в .env.example)
 установить пакетный менеджер uv - pip install uv
 uv sync
 uv run python main.py
