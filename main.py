@@ -10,7 +10,8 @@ from telegram.ext import (
     Application,
 )
 
-from images_processing import ImagesDownloader, ImagesFormatter
+from services.images_processing import ImagesDownloader, ImagesFormatter
+from services.get_pronunciation import get_pronunciation
 from config import config
 
 
@@ -54,6 +55,7 @@ class TgBot:
         reply_text = f"***{query_text}***!"
 
         images = await self.downloader.download_images(query_text)
+        pronunciation = await get_pronunciation(query_text)
 
         if images:
             collage = self.formatter.make_collage(images)
@@ -63,8 +65,15 @@ class TgBot:
         bio = BytesIO()
         collage.save(bio, format="JPEG", quality=90)
         bio.seek(0)
-
-        await update.message.reply_photo(photo=bio, caption=reply_text)
+        await update.message.reply_audio(
+            audio=pronunciation,
+            filename="pronunciation.mp3",
+            performer="Kenixi_english_Bot",
+        )
+        await update.message.reply_photo(
+            photo=bio,
+            caption=reply_text,
+        )
 
 
 def main():
